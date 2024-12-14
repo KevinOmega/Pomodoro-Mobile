@@ -52,7 +52,7 @@ export default function monthlyReport() {
                         },
                     ],
                 }}
-                width={Dimensions.get('window').width - 20 } // Ancho del gráfico
+                width={Dimensions.get('window').width  } // Ancho del gráfico
                 height={300} // Alto del gráfico
                 
                 
@@ -71,10 +71,10 @@ export default function monthlyReport() {
                 verticalLabelRotation={90} // Rotar etiquetas si son largas
             />
             <View style={styles.timeCard}>
-              
+              <Ionicons name="time-outline" size={24} color="#ef6548" />
               <View style={styles.timeInfo}>
                 <Text style={styles.timeTitle}>
-                  Tiempo de Concentración de los ultimos 7 dias
+                  Tiempo de Concentración Hoy
                 </Text>
                 <Text style={styles.timeValue}>
                   {timerStats} minutos
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    padding: 10,
+    padding: 8,
     backgroundColor: "#fee8c8",
   },
   title: {

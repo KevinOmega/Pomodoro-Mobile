@@ -69,7 +69,7 @@ const CircularPomodoroTimer = () => {
   const toggle = () => {
 
     if(state.status === PomodoroState.FOCUS &&  timerStatus === TimerStatus.NOT_STARTED){
-      const response = addPomodoro(state.activeTask,state.timer / 60);
+      const response = addPomodoro(state.activeTask,Number(Math.floor(state.timer / 60) ));
 
       
       if(response.status === "error"){
@@ -92,7 +92,6 @@ const CircularPomodoroTimer = () => {
       setSeconds(state.timer);
       AsyncStorage.setItem("seconds", state.timer.toString());
       setTimerStatus(TimerStatus.NOT_STARTED);
-      console.log(state.currentPomodoro);
       if(state.status === PomodoroState.FOCUS){
         changePomodoroStatus(state.currentPomodoro, PomodoroStatus.CANCELED);
       }

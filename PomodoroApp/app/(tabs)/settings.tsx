@@ -89,7 +89,8 @@ export default function settings() {
     setParams(state.params);
   },[state])
 
-  if(settings === undefined) return null;
+
+  if(!settings ) return null;
   return (
     <View style={[util_styles.container, {backgroundColor: colors.secondary}]}>
       <SectionHeader text="Ajustes"/>
@@ -125,10 +126,10 @@ export default function settings() {
             <Text style={util_styles.h4}>Alarma</Text>
             <CustomCheckBox state={settings.alarm} onPress={handleChangeBooleans}  field="alarm"/>
           </View>
-          <View style={styles.setting_item_row}>
+          {/* <View style={styles.setting_item_row}>
             <Text style={util_styles.h4}>Sonido Tick</Text>
             <CustomCheckBox state={settings.tick} onPress={handleChangeBooleans}  field="tick"/>
-          </View>
+          </View> */}
         </View>
         
         <TouchableOpacity style={[util_styles.btn, util_styles.btn_primary]} onPress={onSubmit}>

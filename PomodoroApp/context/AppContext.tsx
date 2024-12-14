@@ -48,7 +48,7 @@ const AppContextProvider : React.FC<AppProviderProps> = ({ children }) => {
     const realm = useRealm();
     const newUser = useQuery(User)[0];
 
-    const {focus,shortBreak,longBreak,intervals} = newUser?.settings ? newUser.settings : {focus:25,shortBreak:5,longBreak:15,intervals:4}; 
+    const {focus,shortBreak,longBreak,intervals} = newUser?.settings ? newUser.settings : {focus:25*60,shortBreak:5*60,longBreak:15*60,intervals:4}; 
 
     const initialState : AppState = {
       timer : focus,
@@ -116,10 +116,20 @@ const AppContextProvider : React.FC<AppProviderProps> = ({ children }) => {
 
   useEffect(() => {
     const loadSavedStatus = async () => {
-
-      console.log(state,"State...")
+      const dayLogged = await AsyncStorage.getItem("dayLogged").then((res) => {
+        console.log("res",res);
+        if (res !== null) {
+          return parseInt(res);
+        }else{
+          return null;
+        }
+      });
+      console.log("dayLogged",dayLogged,new Date().getDay());
       let savedTimer = await AsyncStorage.getItem("timer").then((res) => {
         if (res) {
+          if (dayLogged !== new Date().getDay()) {
+            return state.params.focusTime;
+          }
           return parseInt(res);
         }else{
           return state.timer
@@ -127,20 +137,29 @@ const AppContextProvider : React.FC<AppProviderProps> = ({ children }) => {
       });
       let savedStatus = await AsyncStorage.getItem("status").then((res) => {
         if (res !== null && res !== "NaN") {
-          return res
+          if (dayLogged !== new Date().getDay()) {
+            return PomodoroState.FOCUS;
+          }
+          return res;
         }else{
           return state.status
         }
       });
       let savedNIntervals = await AsyncStorage.getItem("nIntervals").then((res) => {
         if (res) {
-          return parseInt(res) ;
+          if (dayLogged !== new Date().getDay()) {
+            return 1;
+          }
+          return parseInt(res);
         }else{
           return state.nIntervals
         }
       });
       let savedActiveTask = await AsyncStorage.getItem("activeTask").then((res) => {
         if (res) {
+          if (dayLogged !== new Date().getDay()) {
+            return "";
+          }
           return res;
         }else{
           return state.activeTask
@@ -157,13 +176,14 @@ const AppContextProvider : React.FC<AppProviderProps> = ({ children }) => {
 
       let savedSeconds = await AsyncStorage.getItem("seconds").then((res) => {
         if (res) {
+          if (dayLogged !== new Date().getDay()) {
+            return state.timer;
+          }
           return parseInt(res);
         }else{
           return savedTimer
         }
       });
-
-      console.log(savedTimer,savedSeconds);
 
       AsyncStorage.setItem("seconds",savedSeconds.toString());
       AsyncStorage.setItem("timer",savedTimer.toString());
@@ -171,7 +191,7 @@ const AppContextProvider : React.FC<AppProviderProps> = ({ children }) => {
       AsyncStorage.setItem("nIntervals",savedNIntervals.toString());
       AsyncStorage.setItem("activeTask",savedActiveTask.toString());
       AsyncStorage.setItem("currentPomodoro",savedCurrentPomodoro.toString());
-
+      AsyncStorage.setItem("dayLogged",new Date().getDay().toString());
       if(savedTimer && savedStatus && savedNIntervals && savedActiveTask !== null && savedCurrentPomodoro !== null){
         dispatch({
           type: ActionKind.SET_INITIAL,
@@ -188,7 +208,6 @@ const AppContextProvider : React.FC<AppProviderProps> = ({ children }) => {
     }
     loadSavedStatus();
   },[])
-
 
 
     return (
